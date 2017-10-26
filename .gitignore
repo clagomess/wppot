@@ -1,2 +1,7 @@
 .idea
 *.phar
+/vendor
+phpunit-clover.xml
+phpunit-report.xml
+*.pot
+/build

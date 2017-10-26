@@ -54,7 +54,7 @@ class WpPot {
         return $arMsgId;
     }
 
-    function build($themeDir){
+    function build($potName, $themeDir){
         $arMsgId = array();
         $phpFiles = $this->readPhpFiles($themeDir);
 
@@ -64,7 +64,13 @@ class WpPot {
             }
         }
 
-        $fp = fopen('default.pot', 'w+');
+        $languageDir = $themeDir . DIRECTORY_SEPARATOR . 'languages';
+
+        if(!is_dir($languageDir)){
+            mkdir($languageDir);
+        }
+
+        $fp = fopen($languageDir . DIRECTORY_SEPARATOR . $potName, 'w+');
 
         fwrite($fp, "msgid \"\"\nmsgstr \"\"\n");
         fwrite($fp, '"Content-Type: text/plain; charset=UTF-8\n"');
