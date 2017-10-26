@@ -20,4 +20,20 @@ class WpPotTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals('index.php', current($arFiles)['filename']);
         $this->assertEquals('assets'.DIRECTORY_SEPARATOR.'index.php', current($arFiles)['filepath']);
     }
+
+    public function testBuild(){
+        $wppot = new WpPot();
+        $wppot->build('default.pot', 'assets', new ConsoleOutput());
+
+        $potfile = 'assets'.DIRECTORY_SEPARATOR.'languages'.DIRECTORY_SEPARATOR.'default.pot';
+
+        $this->assertTrue(file_exists($potfile));
+
+        $fp = fopen($potfile, 'r');
+        $content = fread($fp, filesize($potfile));
+        fclose($fp);
+
+        $this->assertContains('index.php:2', $content);
+        $this->assertContains('msgid "foo"', $content);
+    }
 }
