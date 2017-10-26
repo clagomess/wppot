@@ -17,6 +17,6 @@ class WpPotTest extends PHPUnit_Framework_TestCase {
         $this->assertArrayHasKey('filename', current($arFiles));
         $this->assertArrayHasKey('filepath', current($arFiles));
         $this->assertEquals('index.php', current($arFiles)['filename']);
-        $this->assertEquals('assets\index.php', current($arFiles)['filepath']);
+        $this->assertEquals('assets'.DIRECTORY_SEPARATOR.'index.php', current($arFiles)['filepath']);
     }
 }
