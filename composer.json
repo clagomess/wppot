@@ -1,0 +1,30 @@
+{
+    "name": "clagomess/wppot",
+    "description": "Generate *.pot file with Worpress theme base",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Cláudio Gomes",
+            "email": "cla.gomess@gmail.com"
+        }
+    ],
+    "autoload": {
+      "psr-4": { "Src\\": "src/" }
+    },
+    "autoload-dev": {
+      "psr-4": { "Tests\\": "tests/" }
+    },
+    "require": {
+        "php": ">=5.5.9",
+        "symfony/console": "v3.3.10"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.8.*"
+    },
+    "config": {
+        "platform": {
+            "php": "5.5.9"
+        }
+    }
+}
