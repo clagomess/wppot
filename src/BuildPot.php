@@ -19,7 +19,6 @@ class BuildPot extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $output->writeln('Starting Build');
         $name = $input->getArgument('name');
         $path = $input->getArgument('path');
 
@@ -27,6 +26,6 @@ class BuildPot extends Command
         $path = (empty($name) ? __DIR__ : $path);
 
         $wppot = new WpPot();
-        $wppot->build($name, $path);
+        $wppot->build($name, $path, $output);
     }
 }

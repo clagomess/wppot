@@ -1,8 +1,16 @@
 <?php
 namespace Src;
 
+use Symfony\Component\Console\Output\OutputInterface;
+
 class WpPot {
-    function readPhpFiles($dir) {
+
+    /**
+     * @param string $dir
+     * @param OutputInterface $output
+     * @return array
+     */
+    function readPhpFiles($dir, $output) {
         $phpFiles = array();
         $d = dir($dir);
 
@@ -13,15 +21,19 @@ class WpPot {
                 }
 
                 if(is_dir($dir . DIRECTORY_SEPARATOR . $item)){
-                    $phpFiles = array_merge($phpFiles, $this->readPhpFiles($dir . DIRECTORY_SEPARATOR . $item));
+                    $phpFiles = array_merge($phpFiles, $this->readPhpFiles($dir . DIRECTORY_SEPARATOR . $item, $output));
                     continue;
                 }
 
                 if (preg_match('/(.+)\.php/', $item) && is_file($dir . DIRECTORY_SEPARATOR . $item)) {
+                    $filepath = $dir . DIRECTORY_SEPARATOR . $item;
+
                     $phpFiles[] = array(
                         'filename' => $item,
                         'filepath' => $dir . DIRECTORY_SEPARATOR . $item
                     );
+
+                    $output->writeln(sprintf("- %s", $filepath));
                 }
             }
 
@@ -31,10 +43,18 @@ class WpPot {
         return $phpFiles;
     }
 
-    function readMsg($filePath, $fileName) {
+    /**
+     * @param string $filePath
+     * @param string $fileName
+     * @param OutputInterface $output
+     * @return array
+     */
+    function readMsg($filePath, $fileName, $output) {
         $fp = fopen($filePath, 'r');
 
         $arMsgId = array();
+
+        $output->writeln(sprintf("### Parsing %s:", $filePath));
 
         if ($fp) {
             $lineNum = 1;
@@ -42,6 +62,7 @@ class WpPot {
                 if(preg_match_all('/_(_|e)\((\'|")(.+?)(\'|")\)/', $line, $matches)) {
                     foreach ($matches[3] as $msgid){
                         $arMsgId[$msgid][] = sprintf("%s:%s", $fileName, $lineNum);
+                        $output->writeln(sprintf("- Found at line %s: {%s}", $lineNum, $msgid));
                     }
                 }
 
@@ -54,17 +75,27 @@ class WpPot {
         return $arMsgId;
     }
 
-    function build($potName, $themeDir){
+    /**
+     * @param string $potName
+     * @param string $themeDir
+     * @param OutputInterface $output
+     */
+    function build($potName, $themeDir, $output){
         $arMsgId = array();
-        $phpFiles = $this->readPhpFiles($themeDir);
+
+        $output->writeln("### PHP Files found:");
+
+        $phpFiles = $this->readPhpFiles($themeDir, $output);
 
         if($phpFiles){
             foreach ($phpFiles as $file){
-                $arMsgId = array_merge($arMsgId, $this->readMsg($file['filepath'], $file['filename']));
+                $arMsgId = array_merge($arMsgId, $this->readMsg($file['filepath'], $file['filename'], $output));
             }
         }
 
         $languageDir = $themeDir . DIRECTORY_SEPARATOR . 'languages';
+
+        $output->writeln(sprintf("### Building POT file on %s", $languageDir));
 
         if(!is_dir($languageDir)){
             mkdir($languageDir);
