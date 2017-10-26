@@ -4,15 +4,17 @@ namespace Src;
 use Phar;
 
 class BuildPhar {
+    const pharname = "wppot.phar";
+
     public static function build(){
         ini_set("phar.readonly", 0);
 
-        if(is_file('wppot.phar')){
-            unlink('wppot.phar');
+        if(is_file(BuildPhar::pharname)){
+            unlink(BuildPhar::pharname);
         }
 
         // COMPILE
-        $phar = new Phar("wppot.phar");
+        $phar = new Phar(BuildPhar::pharname);
         $phar->startBuffering();
 
         $defaultStub = $phar->createDefaultStub('main.php');
