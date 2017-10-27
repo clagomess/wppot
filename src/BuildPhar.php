@@ -4,17 +4,20 @@ namespace Src;
 use Phar;
 
 class BuildPhar {
-    const pharname = "wppot.phar";
+    const PHARNAME = "wppot.phar";
 
     public static function build(){
-        ini_set("phar.readonly", 0);
+        if(ini_get('phar.readonly') == 1) {
+            echo 'Needs to disable "phar.readonly" on php.ini';
+            return;
+        }
 
-        if(is_file(BuildPhar::pharname)){
-            unlink(BuildPhar::pharname);
+        if(is_file(BuildPhar::PHARNAME)){
+            unlink(BuildPhar::PHARNAME);
         }
 
         // COMPILE
-        $phar = new Phar(BuildPhar::pharname);
+        $phar = new Phar(BuildPhar::PHARNAME);
         $phar->startBuffering();
 
         $defaultStub = $phar->createDefaultStub('main.php');

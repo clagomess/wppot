@@ -59,8 +59,8 @@ class WpPot {
         if ($fp) {
             $lineNum = 1;
             while (($line = fgets($fp)) !== false) {
-                if(preg_match_all('/_(_|e)\((\'|")(.+?)(\'|")\)/', $line, $matches)) {
-                    foreach ($matches[3] as $msgid){
+                if(preg_match_all('/(esc_attr|)_(_|e|x)\(( *?)(\'|")(.+?)(\'|")( *)(\)|,)/', $line, $matches)) {
+                    foreach ($matches[5] as $msgid){
                         $arMsgId[$msgid][] = sprintf("%s:%s", $fileName, $lineNum);
                         $output->writeln(sprintf("- Found at line %s: {%s}", $lineNum, $msgid));
                     }
@@ -109,6 +109,7 @@ class WpPot {
 
         if($arMsgId){
             foreach ($arMsgId as $msgid => $files){
+                $msgid = str_replace('"', '\"', $msgid);
                 fwrite($fp, sprintf("#: %s\nmsgid \"%s\"\nmsgstr \"\"\n\n", implode(' ', $files), $msgid));
             }
         }
